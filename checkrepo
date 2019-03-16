@@ -1,0 +1,83 @@
+#!/usr/bin/perl -w
+# verify correctness of repodata
+use strict;
+use XML::Simple;
+use Digest;
+use PerlIO::gzip;
+use Data::Dumper;
+
+our %covered = ();
+our @coveredwhitelist = qw(
+    repodata/appdata-ignore.xml.gz
+    repodata/repomd.xml.asc
+    repodata/repomd.xml.key
+    repodata/repomd.xml
+);
+our %digestmap = ("sha256"=>"SHA-256");
+our $dir=shift || "/home/bernhard/nobackup/opensuse/current/tumbleweed/repo/oss";
+chdir $dir;
+
+sub getdigest($)
+{
+	my $type = $digestmap{$_[0]} or die "unsupported digest type $_[0]";
+	return Digest->new($type);
+}
+
+# prep:
+# aptitude install libperlio-gzip-perl
+# gpg --recv-key 0xB88B2FD43DBDC284
+
+
+sub covered($)
+{ $covered{$_[0]}++}
+
+sub checkfile($)
+{ my $filestruct = shift;
+	my $digest = getdigest $filestruct->{checksum}{type};
+	my $loc = $filestruct->{location}{href};
+	#print "Debug: opening $loc\n";
+	if(0) { # check sha256
+		$digest->addfile(IO::File->new($loc));
+		$digest->hexdigest eq $filestruct->{checksum}{content} or die "digest mismatch in $loc";
+	}
+	my $filesize = (stat($loc))[7];
+	my $pkgsize = $filestruct->{size};
+	$pkgsize = $pkgsize->{package} if ref $pkgsize;
+	$filesize == $pkgsize or die "size mismatch in $loc: $filesize vs $pkgsize";
+	covered($loc);
+}
+
+sub checkprimary($)
+{
+	my $file = shift;
+	open my $fd, "<:gzip", $file or die $!;
+	open my $fdtest, "/tmp/primary.xml" or die $!;
+	my $ref = XMLin($fd, ForceArray => ["rpm:entry", "package"], KeyAttr => []);
+	foreach my $pkg (@{$ref->{package}}) {
+	    my $loc = $pkg->{location}{href};
+            checkfile($pkg);
+	    #print Dumper($pkg);
+    	}
+}
+
+
+system("gpg -d $dir/repodata/repomd.xml.asc") and exit 11;
+
+my $ref = XMLin(IO::File->new("$dir/repodata/repomd.xml"), ForceArray => ['data']);
+my $d = $ref->{data};
+foreach my $file (@$d) {
+	#print Dumper($file);
+    checkfile($file);
+    my $loc = $file->{location}{href};
+    if($file->{type} eq "primary") {
+	    checkprimary($loc);
+    }
+}
+
+foreach(@coveredwhitelist) {covered($_)}
+my @files=split("\n", `find repodata x86_64 i[56]86 noarch -type f`);
+for my $file (@files) {
+	unless($covered{$file}) {
+		print "uncovered file: $file\n";
+	}
+}
