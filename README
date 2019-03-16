@@ -1,0 +1,4 @@
+Tools to create an archive of openSUSE Factory aka Tumbleweed.
+
+This can allow to reproduce builds done with older versions.
+See https://en.opensuse.org/openSUSE:Reproducible_Builds for background.
