@@ -1,6 +1,7 @@
 #!/bin/bash
 d=~/nobackup/opensuse
 c=$d/current/tumbleweed/repo/oss/
+PATH=/usr/local/bin/ipfs:$PATH
 mkdir -p $c
 curl -s http://ftp.gwdg.de/pub/opensuse/tumbleweed/repo/oss/media.1/products | diff - $c/media.1/products && exit 0
 rsync -ay --delete-delay --delay-updates rsync://ftp.gwdg.de/pub/opensuse/tumbleweed/repo/oss/ $c > /dev/null
@@ -9,8 +10,8 @@ test -n "$ver" || exit 50    # sanity check
 [[ $ver =~ ^20 ]] || exit 51 # sanity check
 target=$d/history/"$ver"
 test -d "$target" && exit 0 # already synced
+checkrepo $c || exit 52
 mkdir -p "$target"
 cp -al $d/current/tumbleweed "$target/"
-/usr/local/bin/checkrepo $c
-echo "next: ipfs add -Q --pin --raw-leaves -r $d/current/ | tee ~/.ipfs/bmw/opensuse/newhead"
-echo "then: opensuse-add $(cat ~/.ipfs/bmw/opensuse/newhead)"
+ipfs add -Q --pin --raw-leaves -r $d/current/ | tee ~/.ipfs/bmw/opensuse/newhead-$ver
+echo "then: opensuse-add $(cat ~/.ipfs/bmw/opensuse/newhead-$ver)"

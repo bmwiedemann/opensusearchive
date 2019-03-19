@@ -8,9 +8,11 @@ newhead=$(ipfs object patch add-link $newhead current $addobj)
 #too slow:ipfs pin update $head $newhead
 ipfs pin add --recursive=false $newhead
 ipfs pin add --recursive=false $newhead/history
-mv $d/head{,.$addname}
+#mv $d/head{,.$addname}
+date "+$head %Y-%m-%dT%H:%M:%S" >> $d/reflog
 echo $newhead > $d/head
 fusermount -u /ipns
 #ipfs name publish /ipfs/$newhead
 cd ~/code/cvs/dynaname && TXTRECORD="dnslink=/ipfs/$newhead" ./dynaname -4 -S vm2b.zq1.de. -H tumbleweedipfs.d.zq1.de 
-
+ipfs name publish --key=tumbleweed $newhead
+# => /ipns/QmWYH4XmxSqwzV1DdqJPgwMrhAABZWPoSe4USjwJdkaAQy
