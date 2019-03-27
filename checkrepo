@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 # verify correctness of repodata
+# zypper install perl-PerlIO-gzip perl-XML-Simple
 use strict;
 use XML::Simple;
 use Digest;
@@ -51,7 +52,7 @@ sub checkprimary($)
 {
 	my $file = shift;
 	open my $fd, "<:gzip", $file or die $!;
-	open my $fdtest, "/tmp/primary.xml" or die $!;
+	#open my $fdtest, "/tmp/primary.xml" or die $!;
 	my $ref = XMLin($fd, ForceArray => ["rpm:entry", "package"], KeyAttr => []);
 	foreach my $pkg (@{$ref->{package}}) {
 	    my $loc = $pkg->{location}{href};
@@ -61,9 +62,9 @@ sub checkprimary($)
 }
 
 
-system("gpg -d $dir/repodata/repomd.xml.asc") and exit 11;
+system("gpg -d repodata/repomd.xml.asc") and exit 11;
 
-my $ref = XMLin(IO::File->new("$dir/repodata/repomd.xml"), ForceArray => ['data']);
+my $ref = XMLin(IO::File->new("repodata/repomd.xml"), ForceArray => ['data']);
 my $d = $ref->{data};
 foreach my $file (@$d) {
 	#print Dumper($file);
