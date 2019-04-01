@@ -1,17 +1,23 @@
 #!/bin/bash
 d=~/.ipfs/bmw/opensuse
+: ${old:=false}
 addobj=$1 #QmZxqNMLtxgSWtombH5Ade8zspWoT7BxtFUMvxCyDmekpC
+addobjt=$(basename $(ipfs resolve /ipfs/$addobj/tumbleweed))
+[[ -n "$addobjt" ]] || exit 21
 addname=$(cut -c12-19 /ipfs/$addobj/tumbleweed/repo/oss/media.1/products) #20190310
 head=`cat $d/head`
 newhead=$(ipfs object patch add-link $head history/$addname $addobj)
-newhead=$(ipfs object patch add-link $newhead current $addobj)
+#$old || newhead=$(ipfs object patch rm-link $newhead current)
+$old || newhead=$(ipfs object patch add-link $newhead tumbleweed $addobjt)
+[[ -n "$newhead" ]] || exit 22
 #too slow:ipfs pin update $head $newhead
-ipfs pin add --recursive=false $newhead
-ipfs pin add --recursive=false $newhead/history
+$old || ipfs pin add --recursive=false $newhead
+$old || ipfs pin add --recursive=false $newhead/history
 #mv $d/head{,.$addname}
 date "+$head %Y-%m-%dT%H:%M:%S" >> $d/reflog
 echo $newhead > $d/head
-fusermount -u /ipns
+$old && exit 0
+fusermount -u /ipns || :
 #ipfs name publish /ipfs/$newhead
 cd ~/code/cvs/dynaname && TXTRECORD="dnslink=/ipfs/$newhead" ./dynaname -4 -S vm2b.zq1.de. -H tumbleweedipfs.d.zq1.de 
 ipfs name publish --key=tumbleweed $newhead
