@@ -20,10 +20,12 @@ if($ENV{BASEDIR}) { chdir $ENV{BASEDIR} }
 my @char = ("a".."z", "A".."Z", "0-9", "_", "-");
 
 while(my $pkg = <>) {
+        chomp($pkg);
         #my $pkg = "history/20190310/tumbleweed/repo/oss/x86_64/zziplib-devel-0.13.69-3.2.x86_64.rpm";
         my $pkgid = get_pkgid $pkg;
         next if $hdrdata{$pkgid}; # already in
         my $cid=`ipfs add -n -Q --raw-leaves $pkg`; chomp($cid);
+        die unless $cid;
         print STDERR "$pkgid : $cid : $pkg\n";
         $hdrdata{$pkgid} = $cid;
         print $txtdb "$pkgid $cid $pkg\n";
