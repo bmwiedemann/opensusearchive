@@ -20,5 +20,8 @@ $old && exit 0
 fusermount -u /ipns || :
 #ipfs name publish /ipfs/$newhead
 cd ~/code/cvs/dynaname && TXTRECORD="dnslink=/ipfs/$newhead" ./dynaname -4 -S vm2b.zq1.de. -H tumbleweedipfs.d.zq1.de 
+l=/home/bernhard/.ipfs/ipns/opensuse.zq1.de
+rm -f $l
+ln -s /ipfs/$newhead $l
 ipfs name publish --key=tumbleweed $newhead
 # => /ipns/QmWYH4XmxSqwzV1DdqJPgwMrhAABZWPoSe4USjwJdkaAQy
