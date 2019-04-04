@@ -9,7 +9,7 @@ our $dbname = "hdrmd5cid.db";
 
 sub get_pkgid($)
 { my $pkg = shift;
-    return `rpm -qp --qf "%{PKGID}" $pkg`;
+    return `rpm -qp --nodigest --nosignature --qf "%{PKGID}" $pkg`;
 }
 
 open(my $txtdb, ">>", "${dbname}.txt") or die "error opening txtdb for writing: $!";
