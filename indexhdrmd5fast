@@ -1,0 +1,48 @@
+#!/usr/bin/perl -w
+use strict;
+use DB_File;
+# create an index of which hdrmd5 values are in which file
+# call as
+# export BASEDIR=/home/bernhard/nobackup/opensuse/ ; cat $ipfsaddoutput | ./indexhdrmd5fast
+
+our $dbname = "hdrmd5cid.db";
+
+sub get_pkgid($)
+{ my $pkg = shift;
+    return `rpm -qp --nodigest --nosignature --qf "%{PKGID}" $pkg`;
+}
+
+open(my $txtdb, ">>", "${dbname}.txt") or die "error opening txtdb for writing: $!";
+my %hdrdata;
+tie(%hdrdata, "DB_File", $dbname, O_RDWR|O_CREAT) or die "error opening DB: $!";
+if($ENV{BASEDIR}) { chdir $ENV{BASEDIR} }
+
+my @lines = <>;
+my $ver;
+for(@lines) {
+    if(m!^added (\w+) [a-zA-Z0-9/]+tumbleweed/repo/oss/media.1/products$!) {
+        $ver = `cat /ipfs/$1`;
+        $ver = substr($ver, 11, 8);
+        last;
+    }
+}
+die unless $ver;
+
+my %ciddata; # reverse index - needs 2.5s to create with 145360 entries
+while(my @e = each %hdrdata) {
+    $ciddata{$e[1]} = $e[0];
+}
+
+foreach my $pkg (@lines) {
+    next unless $pkg =~ m/added (\w+) (.*\.rpm)$/;
+    my $cid = $1;
+    $pkg = $2;
+    next if $ciddata{$cid}; # already indexed
+    $pkg =~ s!current/tumbleweed!history/$ver/tumbleweed!;
+    my $pkgid = get_pkgid $pkg;
+    die unless $pkgid;
+    next if $hdrdata{$pkgid}; # already in
+    print STDERR "$pkgid : $cid : $pkg\n";
+    $hdrdata{$pkgid} = $cid;
+    print $txtdb "$pkgid $cid $pkg\n";
+}
