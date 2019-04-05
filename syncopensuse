@@ -5,10 +5,10 @@ incoming=$d/incoming/tumbleweed/repo/oss/
 PATH=/usr/local/bin:$PATH
 mkdir -p $c $incoming
 #curl -s http://ftp.gwdg.de/pub/opensuse/tumbleweed/repo/oss/media.1/products | diff - $c/media.1/products && exit 0
-curl -s http://opensuse.schlundtech.de/factory/repo/oss/media.1/products | diff - $c/media.1/products && exit 0
+[[ $FORCE ]] || { curl -s http://opensuse.schlundtech.de/factory/repo/oss/media.1/products | diff - $c/media.1/products && exit 0 ; }
 # todo: use /mounts/dist/openSUSE/openSUSE-Tumbleweed/ for faster source? can copy over IPFS
 #rsync -ay --delete-delay --delay-updates rsync://ftp.gwdg.de/pub/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null
-rsync -a --delete-delay rsync://opensuse.schlundtech.de/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null
+ionice -c 3 rsync -a --delete-delay rsync://opensuse.schlundtech.de/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null
 #rsync -ac --delete-delay --delay-updates rsync://opensuse.schlundtech.de/opensuse/tumbleweed/repo/oss/repodata/ $incoming/repodata/ > /dev/null
 #rsync -ay --delete-delay --delay-updates rsync://rsync.opensuse.org/opensuse-full-with-factory/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null # can be older than gwdg?
 ver=$(cut -c12-19 $incoming/media.1/products)
@@ -20,7 +20,8 @@ target=$d/history/"$ver"
 rm -rf $c && cp -al $incoming $d/current/tumbleweed/repo/
 mkdir -p "$target"
 cp -al $d/current/tumbleweed "$target/"
-ipfs add -H -Q --pin --raw-leaves -r $d/current/ | tee ~/.ipfs/bmw/opensuse/newhead-$ver
+ionice -c 3 ipfs add -H --pin --raw-leaves -r $d/current/ | tee ~/.ipfs/bmw/opensuse/fulltree-$ver
+tail -1 ~/.ipfs/bmw/opensuse/fulltree-$ver | perl -pe 's/added (\w+) .*/$1/' > ~/.ipfs/bmw/opensuse/newhead-$ver
 newhead=$(cat ~/.ipfs/bmw/opensuse/newhead-$ver)
 test -n "$newhead" || exit 53
 [[ $newhead =~ ^Qm ]] || exit 54
