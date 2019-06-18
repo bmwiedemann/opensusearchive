@@ -1,0 +1,2 @@
+#!/bin/sh
+perl -ane 'if(!$s{$F[0]}++){print}' hdrmd5cid.db.txt hdrmd5cid.db.txt.bernhards > hdrmd5cidcombined.db.txt
