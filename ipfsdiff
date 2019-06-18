@@ -1,0 +1,5 @@
+#!/bin/bash
+cid1=$1
+cid2=$2
+path=$3
+diff -u <(ipfs ls $cid1/$path) <(ipfs ls $cid2/$path)
