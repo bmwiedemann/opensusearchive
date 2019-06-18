@@ -23,5 +23,7 @@ cd ~/code/cvs/dynaname && TXTRECORD="dnslink=/ipfs/$newhead" ./dynaname -4 -S vm
 l=/home/bernhard/.ipfs/ipns/opensuse.zq1.de
 rm -f $l
 ln -s /ipfs/$newhead $l
-ipfs name publish --key=tumbleweed $newhead
+ipfs name publish $newhead
+# => /ipns/QmT7bZwZ3gpBMswUBjtpFhPM42ErFapAPiQHM2ELu3deqs
+#ipfs name publish --key=tumbleweed $newhead
 # => /ipns/QmWYH4XmxSqwzV1DdqJPgwMrhAABZWPoSe4USjwJdkaAQy
