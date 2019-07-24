@@ -1,0 +1,3 @@
+# Get the required deps for checkrepo:
+apt install libperlio-gzip-perl
+zypper -n install perl-PerlIO-gzip
