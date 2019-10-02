@@ -7,6 +7,9 @@ addobjt=$(basename $(ipfs resolve /ipfs/$addobj/tumbleweed))
 addname=$(cut -c12-19 /ipfs/$addobj/tumbleweed/repo/oss/media.1/products) #20190310
 head=`cat $d/head`
 newhead=$(ipfs object patch add-link $head history/$addname $addobj)
+(cd /ipfs/$newhead/history/ && ls -d -r 20*) > ~/nobackup/opensuse/history/list
+addobjlist=$(ipfs add -Q --raw-leaves ~/nobackup/opensuse/history/list)
+newhead=$(ipfs object patch add-link $newhead history/list $addobjlist)
 #$old || newhead=$(ipfs object patch rm-link $newhead current)
 $old || newhead=$(ipfs object patch add-link $newhead tumbleweed $addobjt)
 [[ -n "$newhead" ]] || exit 22
