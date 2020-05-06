@@ -1,0 +1,29 @@
+#!/bin/sh
+dns=$1
+d=~/.ipfs/follow
+mkdir -p $d
+
+cur=$(ipfs resolve /ipns/$dns | sed -e 's,^/ipfs/,,')
+if [ -z "$cur" ] ; then
+    echo "$dns not resolvable"
+    exit 71
+fi
+
+prev=$(cat $d/$dns)
+if [ -z "$prev" ] ; then
+    echo "$dns not found"
+    if [ -n "$ADD" ] ; then
+	echo "pinning $dns as $cur"
+        ipfs pin add -r $cur
+    else
+        exit 70
+    fi
+fi
+
+if [ "$prev" = "$cur" ] ; then
+    echo "$dns = $cur is uptodate"
+    exit 0
+fi
+echo "starting the update of $dns from $prev to $cur"
+ipfs pin update $prev $cur
+echo $cur > $d/$dns
