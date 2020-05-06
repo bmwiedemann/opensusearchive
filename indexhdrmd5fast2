@@ -1,0 +1,20 @@
+#!/usr/bin/perl -w
+use strict;
+my $ipfsbase=shift || "/ipfs/bafybeiazysigwesc3nrx66fttomqlqmaps4clyie74nwzgrv3lhwvr5tzu";
+my $repodir="$ipfsbase/tumbleweed/repo/oss";
+our $dir;
+
+sub transformline
+{
+  s/^(\w+)\s+\d+\s+(.*)/added $1 $dir\/$2/;
+  return $_;
+}
+
+my @entries;
+for $dir ("$repodir/media.1", "$repodir/noarch", "$repodir/x86_64") {
+  push @entries, map(transformline, `ipfs object links $dir`);
+}
+
+#open(PIPE, "|-", "cat") or die $!; #debug
+open(PIPE, "|-", "./indexhdrmd5fast") or die $!;
+print PIPE @entries;

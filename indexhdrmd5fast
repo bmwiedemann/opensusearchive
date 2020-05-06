@@ -20,7 +20,7 @@ if($ENV{BASEDIR}) { chdir $ENV{BASEDIR} }
 my @lines = <>;
 my $ver;
 for(@lines) {
-    if(m!^added (\w+) [a-zA-Z0-9/]+tumbleweed/repo/oss/media.1/products$!) {
+    if(m!^added (\w+) [a-zA-Z0-9./-]+tumbleweed/repo/oss/media.1/products$!) {
         $ver = `cat /ipfs/$1`;
         $ver = substr($ver, 11, 8);
         last;
@@ -38,7 +38,7 @@ foreach my $pkg (@lines) {
     my $cid = $1;
     $pkg = $2;
     next if $ciddata{$cid}; # already indexed
-    $pkg =~ s!current/tumbleweed!history/$ver/tumbleweed!;
+    $pkg =~ s!.*/tumbleweed!history/$ver/tumbleweed!;
     my $pkgid = get_pkgid $pkg;
     die unless $pkgid;
     next if $hdrdata{$pkgid}; # already in
