@@ -38,7 +38,7 @@ foreach my $pkg (@lines) {
     my $cid = $1;
     $pkg = $2;
     next if $ciddata{$cid}; # already indexed
-    $pkg =~ s!.*/tumbleweed!history/$ver/tumbleweed!;
+    $pkg =~ s!.*?/tumbleweed!history/$ver/tumbleweed!;
     my $pkgid = get_pkgid $pkg;
     die unless $pkgid;
     next if $hdrdata{$pkgid}; # already in
