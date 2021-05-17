@@ -1,0 +1,8 @@
+#!/bin/bash
+# remove an entry from tree
+d=~/.ipfs/bmw/opensuse
+obj=$1
+head=`cat $d/head`
+newhead=$(ipfs object patch rm-link $head $obj)
+date "+$head %Y-%m-%dT%H:%M:%S -$obj" >> $d/reflog
+echo $newhead > $d/head
