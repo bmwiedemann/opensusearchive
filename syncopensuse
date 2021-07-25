@@ -24,7 +24,7 @@ ionice -c 3 ipfs add -H --pin --cid-version 1 --raw-leaves -r $d/current/ > ~/.i
 tail -1 ~/.ipfs/bmw/opensuse/fulltree-$ver | perl -pe 's/added (\w+) .*/$1/' | tee ~/.ipfs/bmw/opensuse/newhead-$ver
 newhead=$(cat ~/.ipfs/bmw/opensuse/newhead-$ver)
 test -n "$newhead" || exit 53
-[[ $newhead =~ ^Qm ]] || exit 54
+[[ $newhead =~ ^Qm ]] || [[ $newhead =~ ^bafybei ]] || exit 54
 test -d /ipfs/$newhead/tumbleweed || exit 55 # in case ipfs daemon died and last ref was not the one of top dir
 cd ~/code/cvs/opensusearchive/ && time BASEDIR=/home/bernhard/nobackup/opensuse/ ./indexhdrmd5fast < ~/.ipfs/bmw/opensuse/fulltree-$ver
 ./combinedbs
