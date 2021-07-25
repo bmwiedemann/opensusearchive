@@ -6,12 +6,19 @@ addobjt=$(basename $(ipfs resolve /ipfs/$addobj/tumbleweed))
 [[ -n "$addobjt" ]] || exit 21
 addname=$(cut -c12-19 /ipfs/$addobj/tumbleweed/repo/oss/media.1/products) #20190310
 head=`cat $d/head`
-newhead=$(ipfs --upgrade-cidv0-in-output object patch add-link $head history/$addname $addobj)
-(ipfs ls --size=false --resolve-type=false /ipfs/$newhead/history/ | perl -pe 's/^[^ ]+ *(.*)/$1/' | tac | grep 20) > ~/nobackup/opensuse/history/list
-addobjlist=$(ipfs add -Q --raw-leaves ~/nobackup/opensuse/history/list)
-newhead=$(ipfs --upgrade-cidv0-in-output object patch add-link $newhead history/list $addobjlist)
-#$old || newhead=$(ipfs object patch rm-link $newhead current)
-$old || newhead=$(ipfs --upgrade-cidv0-in-output object patch add-link $newhead tumbleweed $addobjt)
+ipfs files rm --flush=false -r /h
+ipfs files cp /ipfs/$head /h
+ipfs files rm --flush=false -r /h/history/$addname
+ipfs files cp /ipfs/$addobj /h/history/$addname
+ipfs files rm --flush=false /h/history/list
+addobjlist=$(ipfs files ls /h/history/ |
+  ipfs add -Q --raw-leaves)
+ipfs files cp /ipfs/$addobjlist /h/history/list
+if ! $old ; then
+  ipfs files rm --flush=false -r /h/tumbleweed
+  ipfs files cp /ipfs/$addobjt /h/tumbleweed
+fi
+newhead=$(ipfs --upgrade-cidv0-in-output files stat --hash /h)
 [[ -n "$newhead" ]] || exit 22
 #too slow:ipfs pin update $head $newhead
 $old || ipfs pin add --recursive=false $newhead
