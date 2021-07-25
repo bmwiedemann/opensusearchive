@@ -9,7 +9,8 @@ if [ -z "$cur" ] ; then
     exit 71
 fi
 
-prev=$(cat $d/$dns)
+storepath=$d/$(echo $dns | sed 's,[/],_,g')
+prev=$(cat $storepath)
 if [ -z "$prev" ] ; then
     echo "$dns not found"
     if [ -n "$ADD" ] ; then
@@ -26,4 +27,4 @@ if [ "$prev" = "$cur" ] ; then
 fi
 echo "starting the update of $dns from $prev to $cur"
 ipfs pin update $prev $cur
-echo $cur > $d/$dns
+echo $cur > $storepath
