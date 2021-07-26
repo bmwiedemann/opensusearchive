@@ -10,6 +10,7 @@ ipfs files rm --flush=false -r /h
 ipfs files cp /ipfs/$head /h
 ipfs files rm --flush=false -r /h/history/$addname
 ipfs files cp /ipfs/$addobj /h/history/$addname
+./addiso $addname
 ipfs files rm --flush=false /h/history/list
 addobjlist=$(ipfs files ls /h/history/ |
   ipfs add -Q --raw-leaves)

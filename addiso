@@ -1,0 +1,14 @@
+#!/usr/bin/perl -w
+use strict;
+my $ver = shift;
+
+for my $cidf (<$ENV{HOME}/nobackup/opensuse/iso/tumbleweed/openSUSE-Tumbleweed-*-Snapshot$ver-Media.iso.cid>) {
+  my $cid = `cat $cidf`; chomp($cid);
+  my $isoname = $cidf;
+  $isoname =~s!.*/!!;
+  $isoname =~s!\.cid$!!;
+print "$isoname $cid\n";
+  system(qw"ipfs files mkdir", "/h/history/$ver/tumbleweed/iso");
+  system(qw"ipfs files cp", "/ipfs/$cid", "/h/history/$ver/tumbleweed/iso/$isoname");
+  system(qw"ipfs files cp", "/ipfs/$cid", "/opensuse/iso/tumbleweed/$isoname");
+}
