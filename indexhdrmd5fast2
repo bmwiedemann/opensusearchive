@@ -6,13 +6,13 @@ our $dir;
 
 sub transformline
 {
-  s/^(\w+)\s+\d+\s+(.*)/added $1 $dir\/$2/;
+  s/^(\w+)\s+(.*)/added $1 $dir\/$2/;
   return $_;
 }
 
 my @entries;
 for $dir ("$repodir/media.1", "$repodir/noarch", "$repodir/x86_64") {
-  push @entries, map(transformline, `ipfs object links $dir`);
+  push @entries, map(transformline, `ipfs ls --size=false --resolve-type=false $dir`);
 }
 
 #open(PIPE, "|-", "cat") or die $!; #debug
