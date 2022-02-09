@@ -2,7 +2,7 @@
 # remove an entry from tree
 d=~/.ipfs/bmw/opensuse
 obj=$1
-head=`cat $d/head`
-newhead=$(ipfs object patch rm-link $head $obj)
+ipfs files rm --flush=false -r /h/history/$obj
+newhead=$(ipfs --upgrade-cidv0-in-output files stat --hash /h)
 date "+$head %Y-%m-%dT%H:%M:%S -$obj" >> $d/reflog
 echo $newhead > $d/head
