@@ -62,7 +62,7 @@ sub checkprimary($)
 }
 
 
-system("gpg -d repodata/repomd.xml.asc") and exit 11;
+system("gpg --verify repodata/repomd.xml.asc repodata/repomd.xml") and exit 11;
 
 my $ref = XMLin(IO::File->new("repodata/repomd.xml"), ForceArray => ['data']);
 my $d = $ref->{data};
