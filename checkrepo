@@ -8,6 +8,7 @@ use Digest::SHA;
 use PerlIO::gzip;
 use Data::Dumper;
 
+our $checkdigest = $ENV{CHECKDIGEST} // 0;
 our %covered = ();
 our @coveredwhitelist = qw(
     repodata/appdata-ignore.xml.gz
@@ -35,10 +36,10 @@ sub covered($)
 
 sub checkfile($)
 { my $filestruct = shift;
-	my $digest = getdigest $filestruct->{checksum}{type};
 	my $loc = $filestruct->{location}{href};
 	#print "Debug: opening $loc\n";
-	if(0) { # check sha256
+	if($checkdigest) { # check sha256
+		my $digest = getdigest $filestruct->{checksum}{type};
 		$digest->addfile(IO::File->new($loc));
 		$digest->hexdigest eq $filestruct->{checksum}{content} or die "digest mismatch in $loc";
 	}
