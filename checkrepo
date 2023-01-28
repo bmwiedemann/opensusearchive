@@ -4,6 +4,7 @@
 use strict;
 use XML::Simple;
 use Digest;
+use Digest::SHA;
 use PerlIO::gzip;
 use Data::Dumper;
 
@@ -14,8 +15,8 @@ our @coveredwhitelist = qw(
     repodata/repomd.xml.key
     repodata/repomd.xml
 );
-our %digestmap = ("sha256"=>"SHA-256");
-our $dir=shift || "/home/bernhard/nobackup/opensuse/current/tumbleweed/repo/oss";
+our %digestmap = ("sha256"=>"SHA-256", "sha512"=>"SHA-512");
+our $dir=shift || "$ENV{HOME}/nobackup/opensuse/current/tumbleweed/repo/oss";
 chdir $dir;
 
 sub getdigest($)
