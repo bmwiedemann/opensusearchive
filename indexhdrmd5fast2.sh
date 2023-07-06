@@ -8,7 +8,7 @@ for ver in $vers ; do
   ./indexhdrmd5fast2 $ipns/history/$ver
 done
 cp -af .ipfs.progress .ipfs.done
-echo TODO rsync -a hdrmd5cid.db{,.txt} hotel.zq1.de.:~/code/cvs/opensusearchive/
-echo press enter
-read
-rsync -a hdrmd5cid.db{,.txt} hotel.zq1.de.:~/code/cvs/opensusearchive/
+#echo TODO rsync -aPzv hdrmd5cid.db{,.txt} hotel.zq1.de.:~/code/cvs/opensusearchive/
+#echo press enter
+#read
+#rsync -aPzv hdrmd5cid.db{,.txt} hotel.zq1.de.:~/code/cvs/opensusearchive/
