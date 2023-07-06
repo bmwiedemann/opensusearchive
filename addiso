@@ -10,5 +10,7 @@ for my $cidf (<$ENV{HOME}/nobackup/opensuse/iso/tumbleweed/openSUSE-Tumbleweed-*
 print "$isoname $cid\n";
   system(qw"ipfs files mkdir", "/h/history/$ver/tumbleweed/iso");
   system(qw"ipfs files cp", "/ipfs/$cid", "/h/history/$ver/tumbleweed/iso/$isoname");
+  system(qw"ipfs files cp", "/opensuse/iso/tumbleweed/$isoname.sha256", "/h/history/$ver/tumbleweed/iso/$isoname.sha256");
+  system(qw"ipfs files cp", "/opensuse/iso/tumbleweed/$isoname.sha256.asc", "/h/history/$ver/tumbleweed/iso/$isoname.sha256.asc");
   system(qw"ipfs files cp", "/ipfs/$cid", "/opensuse/iso/tumbleweed/$isoname");
 }
