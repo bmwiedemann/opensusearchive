@@ -11,7 +11,13 @@ ipfs files rm --flush=false -r /h
 ipfs files cp /ipfs/$head /h
 ipfs files rm --flush=false -r /h/history/$addname
 ipfs files cp /ipfs/$addobj /h/history/$addname
+# add hdrmd5cid.txt
+cid=$(ipfs add -Q --pin=false --cid-version 1 --raw-leaves hdrmd5cidcombined.db.txt)
+ipfs files rm --flush=false /h/other/hdrmd5cid.txt
+ipfs files cp /ipfs/$cid /h/other/hdrmd5cid.txt
+
 ./addiso $addname
+addobjt=$(ipfs --upgrade-cidv0-in-output files stat --hash /h/history/$addname/tumbleweed)
 ipfs files rm --flush=false /h/history/list
 addobjlist=$(ipfs files ls /h/history/ |
   ipfs add -Q --raw-leaves)
