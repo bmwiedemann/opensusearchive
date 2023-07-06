@@ -5,10 +5,12 @@ incoming=$d/incoming/tumbleweed/repo/oss/
 PATH=/usr/local/bin:$PATH
 mkdir -p $c $incoming
 #curl -s http://ftp.gwdg.de/pub/opensuse/tumbleweed/repo/oss/media.1/products | diff - $c/media.1/products && exit 0
+[[ $FORCE ]] || { curl -s http://stage3.opensuse.org/tumbleweed/repo/oss/media.1/products | diff - $c/media.1/products && exit 0 ; }
 #[[ $FORCE ]] || { curl -s http://opensuse.schlundtech.de/factory/repo/oss/media.1/products | diff - $c/media.1/products && exit 0 ; }
 # todo: use /mounts/dist/openSUSE/openSUSE-Tumbleweed/ for faster source? can copy over IPFS
 #rsync -ay --delete-delay --delay-updates rsync://ftp.gwdg.de/pub/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null
-ionice -c 3 rsync -a --delete-delay rsync://stage.opensuse.org/opensuse-full-with-factory/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null
+ionice -c 3 rsync --timeout 600 -ay rsync://stage3.opensuse.org/opensuse-full-with-factory/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null
+ionice -c 3 rsync --timeout 600 -ay --delete-delay rsync://stage.opensuse.org/opensuse-full-with-factory/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null
 #ionice -c 3 rsync -a --delete-delay rsync://opensuse.schlundtech.de/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null
 #rsync -ac --delete-delay --delay-updates rsync://opensuse.schlundtech.de/opensuse/tumbleweed/repo/oss/repodata/ $incoming/repodata/ > /dev/null
 #rsync -ay --delete-delay --delay-updates rsync://rsync.opensuse.org/opensuse-full-with-factory/opensuse/tumbleweed/repo/oss/ $incoming > /dev/null # can be older than gwdg?
