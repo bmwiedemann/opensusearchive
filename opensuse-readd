@@ -1,0 +1,6 @@
+#!/bin/sh
+# re-add latest version to add isos
+# ./opensuse-add $(basename $(ipfs resolve /ipns/opensuse.zq1.de))
+cid=$(ipfs resolve /ipns/opensuse.zq1.de/|cut -d/ -f3)
+./opensuse-add $cid
+echo "warning: bug (includes all history) - need fixuphistory DATE"

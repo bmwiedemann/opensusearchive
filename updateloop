@@ -1,0 +1,3 @@
+#!/bin/sh
+~/bin/ipfsupdatepins
+while sleep 2h ; do time ~/bin/ipfsupdatepins ; done

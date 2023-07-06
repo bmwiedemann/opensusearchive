@@ -1,0 +1,16 @@
+#!/usr/bin/perl -w
+use strict;
+
+my $list = `ipfs cat /ipns/opensuse.zq1.de/history/list`;
+
+my $n = 0;
+foreach (split("\n", $list)) {
+    if($n % 2 == 0 or /^2022/) {
+	    print "keep $_\n";
+    } else {
+	print "remove $_\n";
+        #system(qw"ipfs files rm --flush=false -r", "/h/history/$_");
+	system("./opensuse-rm", $_);
+    }
+    $n++
+}

@@ -1,0 +1,11 @@
+#!/bin/sh
+t=tmpfixup
+d=$1 # 20221119
+cid=$(ipfs resolve /ipns/opensuse.zq1.de/history/$d/tumbleweed)
+ipfs files rm -r $t
+ipfs files mkdir $t
+ipfs files cp $cid $t/tumbleweed
+ipfs files rm -r --flush=false /h/history/$d
+ipfs files cp               $t /h/history/$d
+ipfs files rm -r $t
+ipfs files stat --hash /h > ~/.ipfs/bmw/opensuse/head

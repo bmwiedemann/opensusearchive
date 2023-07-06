@@ -1,0 +1,5 @@
+#!/bin/sh
+./syncopensuse
+while sleep 1h ; do
+  ./syncopensuse
+done

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+tmp=~/nobackup/opensuse/iso/tumbleweed/
+
+#rsync -aP --delete-delay 'rsync://opensuse.schlundtech.de/opensuse/tumbleweed/iso/openSUSE-Tumbleweed-[DN]*Media.iso' $tmp
+rsync -6 -ayP --delete-delay 'rsync://stage3.opensuse.org/opensuse-full-with-factory-dvd5/opensuse/tumbleweed/iso/openSUSE-Tumbleweed-[DN]*-x86_64-*Media.iso*' $tmp
+#read
+#exit 5
+
+#for iso in $tmp/openSUSE-Tumbleweed-NET-x86_64-Snapshot20210711-Media.iso ; do
+for iso in $tmp/openSUSE-*.iso ; do
+        if [ -e $iso.cid ] ; then
+            continue
+        fi
+	cid=$(~/code/git/ipfs-iso-jigsaw/ipfsjigsaw.py $iso | tail -1)
+        echo verifying content...
+        md5a=$(md5sum $iso | cut -f1 -d" ")
+        md5b=$(ipfs cat /ipfs/$cid | md5sum - | cut -f1 -d" ")
+	if [ "$md5a" != "$md5b" ] ; then
+		echo "mismatching md5sums $md5a $md5b for $iso and $cid"
+		exit 50
+	fi
+	echo $cid > $iso.cid
+	ipfs files cp /ipfs/$cid /opensuse/iso/tumbleweed/$(basename $iso)
+done
+for f in $tmp/openSUSE-*.iso.sha* ; do
+	ipfs add --cid-version 1 --raw-leaves "$f" --to-files /opensuse/iso/tumbleweed/$(basename $f)
+done
+find $tmp -type f -mtime +6 -name \*.iso -delete
