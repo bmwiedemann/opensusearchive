@@ -18,6 +18,7 @@ our @coveredwhitelist = qw(
 );
 our %digestmap = ("sha256"=>"SHA-256", "sha512"=>"SHA-512");
 our $dir=shift || "$ENV{HOME}/nobackup/opensuse/current/tumbleweed/repo/oss";
+if($ENV{SKIPCHECK}) {exit 0}
 chdir $dir;
 
 sub getdigest($)
