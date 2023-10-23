@@ -78,7 +78,7 @@ foreach my $file (@$d) {
 }
 
 foreach(@coveredwhitelist) {covered($_)}
-my @files=split("\n", `find repodata x86_64 i[56]86 noarch -type f`);
+my @files=split("\n", `find repodata x86_64 noarch -type f`);
 for my $file (@files) {
 	unless($covered{$file}) {
 		print "uncovered file: $file\n";
