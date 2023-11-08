@@ -1,7 +1,7 @@
 #!/bin/sh
 ipns=`ipfs resolve /ipns/opensuse.zq1.de`
 export BASEDIR=$ipns
-cp -af $ipns/history/list .ipfs.progress
+ipfs cat --progress=false $ipns/history/list > .ipfs.progress
 vers=$(diff .ipfs.done .ipfs.progress |perl -ne 'if(m/^> (.*)/){print "$1\n"}'|tac)
 [ -n "$vers" ] || exit 0
 for ver in $vers ; do

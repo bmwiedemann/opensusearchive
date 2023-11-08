@@ -21,7 +21,7 @@ my @lines = <>;
 my $ver;
 for(@lines) {
     if(m!^added (\w+) [a-zA-Z0-9./-]+tumbleweed/repo/oss/media.1/products$!) {
-        $ver = `cat /ipfs/$1`;
+        $ver = `ipfs cat --progress=false /ipfs/$1`;
         $ver = substr($ver, 11, 8);
         last;
     }

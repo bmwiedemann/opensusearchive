@@ -4,7 +4,7 @@ d=~/.ipfs/bmw/opensuse
 addobj=$1 #QmZxqNMLtxgSWtombH5Ade8zspWoT7BxtFUMvxCyDmekpC
 addobjt=$(basename $(ipfs resolve /ipfs/$addobj/tumbleweed))
 [[ -n "$addobjt" ]] || exit 21
-addname=$(cut -c12-19 /ipfs/$addobj/tumbleweed/repo/oss/media.1/products) #20190310
+addname=$(ipfs cat /ipfs/$addobj/tumbleweed/repo/oss/media.1/products | cut -c12-19) #20190310
 [ -n "$addname" ] || exit 23
 head=`cat $d/head`
 ipfs files rm --flush=false -r /h
