@@ -1,3 +1,3 @@
 # Get the required deps for checkrepo:
-apt install libperlio-gzip-perl libxml-simple-perl
-zypper -n install perl-PerlIO-gzip perl-XML-Simple
+apt install libxml-simple-perl
+zypper -n install perl-XML-Simple

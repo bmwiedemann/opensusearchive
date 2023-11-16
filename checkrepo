@@ -1,11 +1,10 @@
 #!/usr/bin/perl -w
 # verify correctness of repodata
-# zypper install perl-PerlIO-gzip perl-XML-Simple
+# zypper install perl-XML-Simple
 use strict;
 use XML::Simple;
 use Digest;
 use Digest::SHA;
-use PerlIO::gzip;
 use Data::Dumper;
 
 our $checkdigest = $ENV{CHECKDIGEST} // 0;
@@ -28,7 +27,6 @@ sub getdigest($)
 }
 
 # prep:
-# aptitude install libperlio-gzip-perl
 # gpg --recv-key 0xB88B2FD43DBDC284
 
 
@@ -54,9 +52,8 @@ sub checkfile($)
 sub checkprimary($)
 {
 	my $file = shift;
-	open my $fd, "<:gzip", $file or die $!;
-	#open my $fdtest, "/tmp/primary.xml" or die $!;
-	my $ref = XMLin($fd, ForceArray => ["rpm:entry", "package"], KeyAttr => []);
+	my $xml = `zstd -cd $file` or die $!;
+	my $ref = XMLin($xml, ForceArray => ["rpm:entry", "package"], KeyAttr => []);
 	foreach my $pkg (@{$ref->{package}}) {
 	    my $loc = $pkg->{location}{href};
             checkfile($pkg);
